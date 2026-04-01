@@ -10,7 +10,6 @@ from __future__ import annotations
 import logging
 import re
 from dataclasses import dataclass
-from typing import Any
 
 import boto3
 
@@ -20,6 +19,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class Document:
     """A document from the knowledge base."""
+
     key: str
     content: str
     size_bytes: int
@@ -100,7 +100,9 @@ class KnowledgeBase:
         try:
             response = self.s3_client.get_object(Bucket=self.bucket_name, Key=key)
             content = response["Body"].read().decode("utf-8")
-            logger.info("Fetched document", extra={"key": key, "size_bytes": len(content)})
+            logger.info(
+                "Fetched document", extra={"key": key, "size_bytes": len(content)}
+            )
             return content
         except Exception as exc:
             logger.error(
@@ -109,7 +111,9 @@ class KnowledgeBase:
             )
             return ""
 
-    def retrieve(self, query: str, max_documents: int = 3) -> list[tuple[Document, str]]:
+    def retrieve(
+        self, query: str, max_documents: int = 3
+    ) -> list[tuple[Document, str]]:
         """
         Retrieve relevant documents based on keyword matching.
 
@@ -175,12 +179,37 @@ class KnowledgeBase:
 
         # Filter out very short tokens and common stopwords
         stopwords = {
-            "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
-            "of", "is", "are", "was", "were", "be", "by", "from", "as", "with",
-            "that", "this", "it", "if", "which", "who", "what", "where", "when", "why",
+            "the",
+            "a",
+            "an",
+            "and",
+            "or",
+            "but",
+            "in",
+            "on",
+            "at",
+            "to",
+            "for",
+            "of",
+            "is",
+            "are",
+            "was",
+            "were",
+            "be",
+            "by",
+            "from",
+            "as",
+            "with",
+            "that",
+            "this",
+            "it",
+            "if",
+            "which",
+            "who",
+            "what",
+            "where",
+            "when",
+            "why",
         }
 
-        return {
-            token for token in tokens
-            if len(token) > 2 and token not in stopwords
-        }
+        return {token for token in tokens if len(token) > 2 and token not in stopwords}

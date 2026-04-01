@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 from unittest.mock import MagicMock, patch
 
-import pytest
 
 from src.handler import (
     lambda_handler,
@@ -17,6 +16,7 @@ from src.handler import (
 # ---------------------------------------------------------------------------
 # verify_slack_signature
 # ---------------------------------------------------------------------------
+
 
 class TestVerifySlackSignature:
     def test_valid_signature_passes(self):
@@ -34,6 +34,7 @@ class TestVerifySlackSignature:
 # ---------------------------------------------------------------------------
 # parse_slack_event
 # ---------------------------------------------------------------------------
+
 
 class TestParseSlackEvent:
     def test_parse_slash_command(self):
@@ -127,6 +128,7 @@ class TestParseSlackEvent:
 # ---------------------------------------------------------------------------
 # lambda_handler
 # ---------------------------------------------------------------------------
+
 
 class TestLambdaHandler:
     def _mock_slack_headers(self) -> dict[str, str]:

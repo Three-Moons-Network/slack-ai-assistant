@@ -182,13 +182,12 @@ resource "aws_s3_bucket_public_access_block" "knowledge_base" {
 # ---------------------------------------------------------------------------
 
 resource "aws_dynamodb_table" "conversations" {
-  name           = "${local.prefix}-conversations"
-  billing_mode   = "PAY_PER_REQUEST"  # Auto-scaling for small volumes
-  hash_key       = "conversation_id"
-  range_key      = "timestamp"
-  stream_specification {
-    stream_view_type = "NEW_AND_OLD_IMAGES"
-  }
+  name             = "${local.prefix}-conversations"
+  billing_mode     = "PAY_PER_REQUEST" # Auto-scaling for small volumes
+  hash_key         = "conversation_id"
+  range_key        = "timestamp"
+  stream_enabled   = true
+  stream_view_type = "NEW_AND_OLD_IMAGES"
 
   attribute {
     name = "conversation_id"
@@ -317,15 +316,15 @@ resource "aws_lambda_function" "handler" {
 
   environment {
     variables = {
-      ENVIRONMENT              = var.environment
-      ANTHROPIC_MODEL          = var.anthropic_model
-      LOG_LEVEL                = var.environment == "prod" ? "WARNING" : "INFO"
-      SLACK_BOT_TOKEN          = var.slack_bot_token
-      SLACK_SIGNING_SECRET     = var.slack_signing_secret
-      ANTHROPIC_API_KEY        = var.anthropic_api_key
-      S3_BUCKET                = aws_s3_bucket.knowledge_base.id
-      S3_PREFIX                = "docs/"
-      DYNAMODB_TABLE           = aws_dynamodb_table.conversations.name
+      ENVIRONMENT          = var.environment
+      ANTHROPIC_MODEL      = var.anthropic_model
+      LOG_LEVEL            = var.environment == "prod" ? "WARNING" : "INFO"
+      SLACK_BOT_TOKEN      = var.slack_bot_token
+      SLACK_SIGNING_SECRET = var.slack_signing_secret
+      ANTHROPIC_API_KEY    = var.anthropic_api_key
+      S3_BUCKET            = aws_s3_bucket.knowledge_base.id
+      S3_PREFIX            = "docs/"
+      DYNAMODB_TABLE       = aws_dynamodb_table.conversations.name
     }
   }
 

@@ -8,13 +8,11 @@ Posts responses back to Slack with source citations.
 
 from __future__ import annotations
 
-import hashlib
-import hmac
 import json
 import logging
 import os
 import time
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from typing import Any
 
 import anthropic
@@ -47,9 +45,11 @@ SIGNATURE_VERIFIER = SignatureVerifier(SLACK_SIGNING_SECRET)
 # Data classes
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class SlackEvent:
     """Parsed Slack event."""
+
     type: str
     user_id: str
     channel: str
@@ -67,6 +67,7 @@ class SlackEvent:
 @dataclass
 class AssistantResponse:
     """Response from the assistant."""
+
     answer: str
     sources: list[str]
     model: str
@@ -77,6 +78,7 @@ class AssistantResponse:
 # ---------------------------------------------------------------------------
 # Slack signature verification
 # ---------------------------------------------------------------------------
+
 
 def verify_slack_signature(
     body: str,
@@ -94,7 +96,9 @@ def verify_slack_signature(
         current_timestamp = int(time.time())
 
         if abs(current_timestamp - request_timestamp) > 300:  # 5 minutes
-            logger.warning("Request timestamp too old", extra={"timestamp": request_timestamp})
+            logger.warning(
+                "Request timestamp too old", extra={"timestamp": request_timestamp}
+            )
             return False
 
         # Verify signature
@@ -108,6 +112,7 @@ def verify_slack_signature(
 # ---------------------------------------------------------------------------
 # Parse Slack events
 # ---------------------------------------------------------------------------
+
 
 def parse_slack_event(body: dict[str, Any]) -> SlackEvent | None:
     """
@@ -179,6 +184,7 @@ def parse_slack_event(body: dict[str, Any]) -> SlackEvent | None:
 # Knowledge base and Claude
 # ---------------------------------------------------------------------------
 
+
 def generate_answer(
     query: str,
     documents: list[tuple[Any, str]],
@@ -241,6 +247,7 @@ def generate_answer(
 # DynamoDB conversation caching (optional)
 # ---------------------------------------------------------------------------
 
+
 def cache_conversation(
     channel: str,
     user_id: str,
@@ -292,6 +299,7 @@ def cache_conversation(
 # ---------------------------------------------------------------------------
 # Lambda handler
 # ---------------------------------------------------------------------------
+
 
 def lambda_handler(event: dict, context: Any) -> dict:
     """
@@ -380,15 +388,17 @@ def lambda_handler(event: dict, context: Any) -> dict:
 
         if response.sources:
             sources_text = ", ".join(f"`{s}`" for s in response.sources)
-            answer_blocks.append({
-                "type": "context",
-                "elements": [
-                    {
-                        "type": "mrkdwn",
-                        "text": f"Sources: {sources_text}",
-                    },
-                ],
-            })
+            answer_blocks.append(
+                {
+                    "type": "context",
+                    "elements": [
+                        {
+                            "type": "mrkdwn",
+                            "text": f"Sources: {sources_text}",
+                        },
+                    ],
+                }
+            )
 
         # Post to Slack
         slack_client.post_message(
@@ -428,7 +438,7 @@ def lambda_handler(event: dict, context: Any) -> dict:
             "body": json.dumps({"error": "Invalid JSON"}),
         }
 
-    except Exception as exc:
+    except Exception:
         logger.exception("Unexpected error")
         return {
             "statusCode": 500,
