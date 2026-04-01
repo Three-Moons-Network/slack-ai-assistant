@@ -312,7 +312,7 @@ resource "aws_lambda_function" "handler" {
   role          = aws_iam_role.lambda.arn
 
   filename         = "${path.module}/../dist/lambda.zip"
-  source_code_hash = filebase64sha256("${path.module}/../dist/lambda.zip")
+  source_code_hash = fileexists("${path.module}/../dist/lambda.zip") ? filebase64sha256("${path.module}/../dist/lambda.zip") : null
 
   environment {
     variables = {
