@@ -1,0 +1,20 @@
+# Example Terraform variables — copy to terraform.tfvars and fill in values
+
+aws_region  = "us-east-1"
+aws_profile = "default"
+
+environment = "dev"
+
+# Slack credentials — get these from your Slack app configuration
+# (Settings > Install App > Bot User OAuth Token, and Settings > App Level Tokens)
+slack_bot_token      = "xoxb-..."  # Bot User OAuth Token
+slack_signing_secret = "..."       # Signing Secret
+
+# Anthropic API key — from console.anthropic.com
+anthropic_api_key = "sk-ant-..."
+
+# Optional overrides
+anthropic_model   = "claude-sonnet-4-20250514"
+lambda_memory     = 256
+lambda_timeout    = 30
+log_retention_days = 7
