@@ -1,0 +1,17 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: slack-ai-assistant
+  description: >
+    Slack bot that answers company questions using S3-stored documents and Claude — keyword-based retrieval, conversation caching, source citations.
+  annotations:
+    github.com/project-slug: Three-Moons-Network/slack-ai-assistant
+  tags:
+    - ai
+    - aws
+    - python
+    - slack
+spec:
+  type: service
+  lifecycle: experimental
+  owner: user:linuxlsr
